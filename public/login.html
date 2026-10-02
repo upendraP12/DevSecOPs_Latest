@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI DevSecOps Copilot - Login</title>
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        background: radial-gradient(circle at top, rgba(94, 234, 212, 0.12), transparent 30%), linear-gradient(135deg, #051019 0%, #0d1f2e 40%, #071422 100%);
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        color: #e5edf7;
+      }
+
+      .login-container {
+        width: min(420px, calc(100% - 32px));
+        background: rgba(16, 27, 39, 0.92);
+        border: 1px solid rgba(148, 163, 184, 0.2);
+        border-radius: 20px;
+        box-shadow: 0 18px 40px rgba(11, 17, 24, 0.55);
+        padding: 30px 28px;
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 14px;
+        margin-bottom: 18px;
+      }
+
+      .brand-mark {
+        width: 46px;
+        height: 46px;
+        border-radius: 14px;
+        display: grid;
+        place-items: center;
+        font-weight: 800;
+        background: linear-gradient(135deg, #5eead4, #7dd3fc);
+        color: #02131d;
+      }
+
+      .brand h1 {
+        margin: 0;
+        font-size: 1.7rem;
+      }
+
+      .brand p {
+        margin: 2px 0 0;
+        text-align: center;
+        color: #9bb0c6;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        font-size: 0.72rem;
+      }
+
+      .login-form {
+        display: grid;
+        gap: 16px;
+        margin-top: 22px;
+      }
+
+      .field {
+        display: grid;
+        gap: 8px;
+      }
+
+      label {
+        color: #dce9f7;
+        font-size: 0.86rem;
+      }
+
+      input {
+        background: rgba(10, 18, 26, 0.85);
+        border: 1px solid rgba(148, 163, 184, 0.25);
+        border-radius: 12px;
+        padding: 13px 14px;
+        color: #edf6ff;
+        font-size: 1rem;
+      }
+
+      input:focus {
+        outline: 2px solid rgba(94, 234, 212, 0.35);
+        border-color: rgba(94, 234, 212, 0.45);
+      }
+
+      .login-btn {
+        margin-top: 8px;
+        border: none;
+        border-radius: 12px;
+        padding: 14px 16px;
+        cursor: pointer;
+        background: linear-gradient(135deg, #5eead4, #7dd3fc);
+        color: #051822;
+        font-weight: 800;
+        font-size: 1rem;
+      }
+
+      .helper-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+        font-size: 0.82rem;
+      }
+
+      .helper-row a {
+        color: #7dd3fc;
+        text-decoration: none;
+      }
+
+      .register {
+        text-align: center;
+        margin-top: 18px;
+        color: #9bb0c6;
+      }
+
+      .register a {
+        color: #5eead4;
+        text-decoration: none;
+      }
+
+      .message {
+        min-height: 20px;
+        margin-top: 8px;
+        font-size: 0.85rem;
+        color: #fbbf24;
+      }
+
+      .message.success {
+        color: #34d399;
+      }
+
+      .token-help {
+        margin-top: 6px;
+        padding: 12px 14px;
+        border: 1px solid rgba(125, 211, 252, 0.22);
+        border-radius: 12px;
+        background: rgba(15, 23, 42, 0.58);
+      }
+
+      .token-help h3 {
+        margin: 0 0 8px;
+        font-size: 0.82rem;
+        color: #7dd3fc;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+      }
+
+      .token-help ul {
+        margin: 0;
+        padding-left: 18px;
+        color: #dfeaf6;
+        font-size: 0.8rem;
+        line-height: 1.6;
+      }
+
+      .token-actions {
+        display: flex;
+        gap: 8px;
+        margin-top: 10px;
+        flex-wrap: wrap;
+      }
+
+      .small-btn,
+      .small-link {
+        border: 1px solid rgba(125, 211, 252, 0.28);
+        border-radius: 10px;
+        background: rgba(15, 23, 42, 0.7);
+        color: #dff5ff;
+        font-size: 0.76rem;
+        padding: 8px 10px;
+        text-decoration: none;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="login-container">
+      <div class="brand">
+        <div class="brand-mark">AI</div>
+        <div>
+          <h1>DevSecOps</h1>
+          <p>Copilot</p>
+        </div>
+      </div>
+
+      <form id="loginForm" class="login-form">
+        <div class="field">
+          <label for="username">Username</label>
+          <input id="username" name="username" type="text" placeholder="Enter username" required />
+        </div>
+
+        <div class="field">
+          <label for="password">Password</label>
+          <input id="password" name="password" type="password" placeholder="Enter password" required />
+        </div>
+
+        <div class="helper-row">
+          <label><input type="checkbox" /> Remember me</label>
+          <a href="#">Forgot password?</a>
+        </div>
+
+        <button class="login-btn" type="submit">Sign in</button>
+
+        <a class="login-btn" style="text-decoration:none; display:block; text-align:center; margin-top:8px;" href="/auth/github">Continue with GitHub</a>
+
+        <div id="loginMessage" class="message" aria-live="polite"></div>
+      </form>
+
+      <div class="register">
+        Don’t have an account? <a href="#" id="showRegisterLink">Register</a>
+      </div>
+
+      <form id="registerForm" class="login-form" style="display:none; margin-top:0;">
+        <div class="field">
+          <label for="registerFullName">Full name</label>
+          <input id="registerFullName" type="text" placeholder="Enter full name" required />
+        </div>
+
+        <div class="field">
+          <label for="registerEmail">Email</label>
+          <input id="registerEmail" type="email" placeholder="Enter email" required />
+        </div>
+
+        <div class="field">
+          <label for="registerUsername">Username</label>
+          <input id="registerUsername" type="text" placeholder="Choose username" required />
+        </div>
+
+        <div class="field">
+          <label for="registerPassword">Password</label>
+          <input id="registerPassword" type="password" placeholder="Create password" required />
+        </div>
+
+        <div class="field">
+          <label for="registerConfirmPassword">Confirm password</label>
+          <input id="registerConfirmPassword" type="password" placeholder="Confirm password" required />
+        </div>
+
+        <button class="login-btn" type="submit">Create account</button>
+      </form>
+    </div>
+
+    <script>
+      const loginForm = document.getElementById('loginForm');
+      const registerForm = document.getElementById('registerForm');
+      const loginMessage = document.getElementById('loginMessage');
+      const showRegisterLink = document.getElementById('showRegisterLink');
+
+      loginForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
+
+        const username = document.getElementById('username').value.trim();
+        const password = document.getElementById('password').value;
+
+        loginMessage.textContent = 'Signing in...';
+        loginMessage.classList.remove('success');
+
+        try {
+          const response = await fetch('/api/login', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ username, password })
+          });
+
+          const data = await response.json();
+
+          if (!response.ok || !data.success) {
+            throw new Error(data.message || 'Login failed');
+          }
+
+          loginMessage.textContent = data.message;
+          loginMessage.classList.add('success');
+
+          sessionStorage.setItem('ai-devsecops-user', JSON.stringify({
+            username: data.user?.username || username,
+            fullName: data.user?.username || username,
+            role: data.user?.role || 'Operator'
+          }));
+
+          setTimeout(() => {
+            window.location.href = data.redirectTo || '/dashboard';
+          }, 600);
+        } catch (error) {
+          loginMessage.textContent = error.message || 'Something went wrong.';
+        }
+      });
+
+      showRegisterLink.addEventListener('click', (event) => {
+        event.preventDefault();
+        loginForm.style.display = 'none';
+        registerForm.style.display = 'grid';
+        loginMessage.textContent = '';
+      });
+
+      registerForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
+
+        const payload = {
+          fullName: document.getElementById('registerFullName').value,
+          email: document.getElementById('registerEmail').value,
+          username: document.getElementById('registerUsername').value,
+          password: document.getElementById('registerPassword').value,
+          confirmPassword: document.getElementById('registerConfirmPassword').value
+        };
+
+        try {
+          const response = await fetch('/api/register', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+          });
+
+          const data = await response.json();
+          loginMessage.textContent = data.message || 'Registration complete.';
+          loginMessage.classList.toggle('success', data.success);
+
+          if (data.success) {
+            registerForm.reset();
+            setTimeout(() => {
+              registerForm.style.display = 'none';
+              loginForm.style.display = 'grid';
+            }, 800);
+          }
+        } catch (error) {
+          loginMessage.textContent = 'Registration failed.';
+        }
+      });
+
+      const params = new URLSearchParams(window.location.search);
+      const queryError = params.get('error');
+      if (queryError) {
+        loginMessage.textContent = decodeURIComponent(queryError);
+      }
+    </script>
+  </body>
+</html>

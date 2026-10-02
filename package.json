@@ -1,0 +1,28 @@
+{
+  "name": "ai-devsecops-copilot",
+  "version": "1.0.0",
+  "description": "AI DevSecOps Copilot dashboard for security, cost, performance and reliability insights",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "keywords": [
+    "devsecops",
+    "ai",
+    "security",
+    "azure",
+    "github",
+    "dashboard"
+  ],
+  "author": "GitHub Copilot",
+  "license": "MIT",
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "nodemailer": "^10.0.13"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.7"
+  }
+}

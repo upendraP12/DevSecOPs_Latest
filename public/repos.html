@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Repositories</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app-shell repo-details-shell">
+      <aside class="sidebar">
+        <div class="brand">
+          <div class="brand-mark">AI</div>
+          <div>
+            <h1>DevSecOps</h1>
+            <p>Copilot</p>
+          </div>
+        </div>
+
+        <nav class="nav">
+          <a href="/dashboard#overview">Overview</a>
+          <a class="active" href="/repos">Repos</a>
+          <a href="/dashboard#security">Security</a>
+          <a href="/dashboard#integrations">Integrations</a>
+          <a href="/dashboard#recommendations">AI recommendations</a>
+        </nav>
+      </aside>
+
+      <main class="main-panel repo-details-panel">
+        <header class="topbar repo-details-topbar">
+          <div>
+            <p class="eyebrow">Repository Portfolio</p>
+            <h2>GitHub and Azure Repositories</h2>
+          </div>
+          <a class="primary-btn repo-back-btn" href="/dashboard#overview">Back to dashboard</a>
+        </header>
+
+        <div id="reposContent" class="repo-detail-content"></div>
+      </main>
+    </div>
+
+    <script src="repos.js"></script>
+  </body>
+</html>

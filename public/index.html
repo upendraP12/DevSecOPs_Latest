@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI DevSecOps Copilot</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar">
+        <div class="brand">
+          <div class="brand-mark">AI</div>
+          <div>
+            <h1>DevSecOps</h1>
+            <p>Copilot</p>
+          </div>
+        </div>
+
+        <nav class="nav">
+          <a class="active" href="#overview">Overview</a>
+          <a href="/repos">Repos</a>
+          <a href="#security">Security</a>
+          <a href="#integrations">Integrations</a>
+          <a href="#recommendations">AI recommendations</a>
+          <button type="button" class="nav-settings-btn" id="leftSidebarSettingsButton">Settings</button>
+        </nav>
+      </aside>
+
+      <main class="main-panel">
+        <header class="topbar" id="pageHeader">
+          <div>
+            <p class="eyebrow" id="pageEyebrow">Operations Intelligence</p>
+            <h2 id="pageTitle">AI Security Command Center</h2>
+          </div>
+
+          <div class="topbar-actions">
+            <button class="primary-btn">Generate Risk Brief</button>
+
+            <div class="profile-menu-wrap">
+              <button class="profile-card" type="button" id="profileToggle" aria-expanded="false" aria-haspopup="true" aria-label="Open user profile menu">
+                <div class="profile-avatar" id="profileAvatar">AD</div>
+                <div class="profile-meta">
+                  <strong id="profileName">Admin User</strong>
+                  <span id="profileRole">Operator</span>
+                </div>
+                <span class="profile-status">Online</span>
+              </button>
+
+              <div class="profile-dropdown" id="profileDropdown" role="menu" aria-label="Profile menu">
+                <button type="button" class="profile-option" id="settingsButton" data-action="settings" role="menuitem">Settings</button>
+                <button type="button" class="profile-option" id="profileSettingsButton" data-action="profile-settings" role="menuitem">Profile settings</button>
+                <button type="button" class="profile-option danger" id="logoutButton" role="menuitem">Logout</button>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <section id="overview" class="page-section active">
+          <div class="overview-metrics section-grid">
+            <div class="metric-card risk-card">
+              <span class="label">Overall Risk</span>
+              <div class="metric-row">
+                <strong id="risk-score">--</strong>
+                <span id="risk-label" class="tag">--</span>
+              </div>
+              <small id="risk-trend">--</small>
+            </div>
+
+            <div class="metric-card">
+              <span class="label">Repos</span>
+              <strong id="repos">--</strong>
+            </div>
+            <div class="metric-card">
+              <span class="label">Pipelines</span>
+              <strong id="pipelines">--</strong>
+            </div>
+            <div class="metric-card">
+              <span class="label">Active Alerts</span>
+              <strong id="alerts">--</strong>
+            </div>
+          </div>
+
+          <section class="stats-row">
+            <div class="panel">
+              <h3>Operational health</h3>
+              <div class="score-list">
+                <div><span>Security Coverage</span><strong id="securityCoverage">--</strong></div>
+                <div><span>Cost Efficiency</span><strong id="costEfficiency">--</strong></div>
+                <div><span>Performance</span><strong id="performance">--</strong></div>
+                <div><span>Reliability</span><strong id="reliability">--</strong></div>
+              </div>
+            </div>
+
+            <div class="panel">
+              <h3>Control coverage</h3>
+              <ul id="controls" class="pill-list"></ul>
+            </div>
+          </section>
+
+          <section class="panel security-panel">
+            <h3>Repository security summary</h3>
+            <div id="repo-security-summary" class="security-summary-grid"></div>
+          </section>
+
+          <section class="panel pull-request-panel">
+            <div class="panel-header-row">
+              <h3>Pull requests</h3>
+              <button type="button" id="loadPullRequestsButton" class="secondary-btn">Pull request</button>
+            </div>
+            <div id="pullRequestsList" class="pull-request-list">
+              <p class="empty-state">Click "Pull request" to load GitHub PR details.</p>
+            </div>
+          </section>
+        </section>
+
+        <section id="repos" class="page-section panel hidden">
+          <h3>Repositories</h3>
+          <div class="placeholder-panel">
+            <p>Repository portfolio and scanning status will appear here.</p>
+          </div>
+        </section>
+
+        <section id="security" class="page-section panel hidden">
+          <h3>Security</h3>
+          <div id="security-content" class="security-page-content"></div>
+        </section>
+
+        <section id="integrations" class="page-section panel hidden">
+          <h3>Connected systems</h3>
+          <div id="systems" class="system-grid"></div>
+        </section>
+
+        <section id="recommendations" class="page-section panel hidden">
+          <h3>AI recommendations</h3>
+          <div id="recommendations-list" class="recommendation-list"></div>
+        </section>
+
+      </main>
+    </div>
+
+    <aside class="settings-blade hidden" id="settingsBlade" aria-hidden="true">
+      <div class="settings-header">
+        <div>
+          <p class="eyebrow modal-eyebrow">Preferences</p>
+          <h3>Settings</h3>
+        </div>
+        <button type="button" class="icon-btn" id="closeSettingsBlade" aria-label="Close settings">×</button>
+      </div>
+
+      <form id="settingsForm" class="settings-form" novalidate>
+        <div id="settingsFormMessage" class="form-message" aria-live="polite"></div>
+
+        <div class="settings-section">
+          <h4>Notifications</h4>
+          <label class="checkbox-row">
+            <input type="checkbox" id="settingsAlertsEnabled" checked />
+            <span>Send security alerts and weekly summaries</span>
+          </label>
+          <label class="checkbox-row">
+            <input type="checkbox" id="settingsDangerOnly" />
+            <span>Only notify for critical issues</span>
+          </label>
+        </div>
+
+        <div class="settings-section">
+          <h4>Experience</h4>
+          <label class="checkbox-row">
+            <input type="checkbox" id="settingsDarkMode" checked />
+            <span>Use dark mode</span>
+          </label>
+          <label class="checkbox-row">
+            <input type="checkbox" id="settingsAutoRefresh" checked />
+            <span>Auto-refresh dashboard data</span>
+          </label>
+        </div>
+
+        <div class="settings-actions">
+          <button type="button" class="secondary-btn" id="cancelSettingsBlade">Cancel</button>
+          <button type="submit" class="primary-btn modal-save-btn">Save settings</button>
+        </div>
+      </form>
+    </aside>
+
+    <div class="modal-overlay hidden" id="profileModal" aria-hidden="true">
+      <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="profileModalTitle">
+        <div class="modal-header">
+          <div>
+            <p class="eyebrow modal-eyebrow">Account</p>
+            <h3 id="profileModalTitle">Profile settings</h3>
+          </div>
+          <button type="button" class="icon-btn" id="closeProfileModal" aria-label="Close profile settings">×</button>
+        </div>
+
+        <form id="profileSettingsForm" class="profile-form" novalidate>
+          <div id="profileFormMessage" class="form-message" aria-live="polite"></div>
+
+          <div class="form-grid">
+            <label>
+              <span>Full name</span>
+              <input type="text" id="profileFullName" name="fullName" placeholder="Enter full name" required />
+            </label>
+
+            <label>
+              <span>Email</span>
+              <input type="email" id="profileEmail" name="email" placeholder="user@example.com" required />
+            </label>
+
+            <label>
+              <span>Username</span>
+              <input type="text" id="profileUsername" name="username" placeholder="Username" required />
+            </label>
+
+            <label>
+              <span>Role</span>
+              <select id="profileRoleSelect" name="role">
+                <option value="Operator">Operator</option>
+                <option value="Administrator">Administrator</option>
+                <option value="Security Lead">Security Lead</option>
+                <option value="Platform Engineer">Platform Engineer</option>
+              </select>
+            </label>
+          </div>
+
+          <div class="form-section">
+            <h4>Preferences</h4>
+            <label class="checkbox-row">
+              <input type="checkbox" id="profileAlertsEnabled" checked />
+              <span>Send security alerts and weekly summaries</span>
+            </label>
+            <label class="checkbox-row">
+              <input type="checkbox" id="profileDarkMode" checked />
+              <span>Use dark mode</span>
+            </label>
+          </div>
+
+          <div class="modal-actions">
+            <button type="button" class="secondary-btn" id="cancelProfileModal">Cancel</button>
+            <button type="submit" class="primary-btn modal-save-btn">Save changes</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
