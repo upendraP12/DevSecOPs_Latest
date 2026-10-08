@@ -944,6 +944,30 @@ app.get('/api/architecture', (req, res) => {
   res.json(architecture);
 });
 
+// Fetch code coverage summary from Codecov (requires CODECOV_TOKEN env or public repo)
+app.get('/api/coverage', async (req, res) => {
+  try {
+    const repo = process.env.GITHUB_REPOSITORY || (req.query.repo || '');
+    if (!repo) return res.json({ success: false, message: 'Repository not configured for coverage.' });
+
+    const token = process.env.CODECOV_TOKEN || '';
+    const apiUrl = `https://codecov.io/api/gh/${repo}/branch/master`;
+
+    const headers = token ? { Authorization: `token ${token}` } : {};
+    const response = await fetch(apiUrl, { headers });
+    if (!response.ok) {
+      const text = await response.text().catch(() => '');
+      return res.status(502).json({ success: false, message: `Codecov request failed: ${response.status} ${text}` });
+    }
+
+    const data = await response.json();
+    const coverage = data?.commit?.totals?.c || data?.commit?.totals?.coverage || null;
+    return res.json({ success: true, coverage: coverage || 0 });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message || 'Unable to fetch coverage' });
+  }
+});
+
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'login.html'));
 });

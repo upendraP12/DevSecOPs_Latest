@@ -552,6 +552,23 @@ function renderOverview(data) {
   bindGitHubTabs();
   bindGitHubConnectControls();
   bindPullRequests();
+
+  // Load coverage to show under control coverage
+  (async function loadCoverage() {
+    try {
+      const resp = await fetch('/api/coverage');
+      const payload = await resp.json().catch(() => ({}));
+      if (!resp.ok || !payload.success) return;
+      const coverage = Number(payload.coverage || 0);
+      const controlsList = document.getElementById('controls');
+      const existing = controlsList.querySelector('.coverage-control');
+      const item = `<li class="coverage-control"><strong>Code coverage</strong>: ${coverage}%</li>`;
+      if (existing) existing.outerHTML = item;
+      else controlsList.insertAdjacentHTML('afterbegin', item);
+    } catch (err) {
+      // ignore
+    }
+  })();
 }
 
 function renderConnectedSystems(data) {
