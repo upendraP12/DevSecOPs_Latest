@@ -692,6 +692,48 @@ function renderConnectedSystems(data) {
   bindRepoSourceTabs();
   bindGitHubTabs();
   bindGitHubConnectControls();
+
+  // Load Azure Repos and insert them into the Azure Resources card if available
+  (async function loadAzureReposInSystems() {
+    try {
+      const resp = await fetch('/api/azure/repos');
+      const contentType = resp.headers.get('content-type') || '';
+      if (!contentType.includes('application/json')) return;
+      const payload = await resp.json().catch(() => ({}));
+      if (!resp.ok || !payload.success) return;
+
+      const repos = Array.isArray(payload.repos) ? payload.repos : [];
+      if (!repos.length) return;
+
+      const systemsContainer = document.getElementById('systems');
+      if (!systemsContainer) return;
+
+      const azureCard = Array.from(systemsContainer.querySelectorAll('.system-card')).find((c) => (c.querySelector('h4') || {}).textContent === 'Azure Resources');
+      if (!azureCard) return;
+
+      const tableHtml = `
+        <table class="repo-table">
+          <thead>
+            <tr><th>Name</th><th>Project</th><th>Default branch</th></tr>
+          </thead>
+          <tbody>
+            ${repos.map((r) => `<tr><td><a href="${r.webUrl || '#'}" target="_blank" rel="noreferrer">${escapeHtml(r.name)}</a></td><td>${escapeHtml(r.project)}</td><td>${escapeHtml(r.defaultBranch || '')}</td></tr>`).join('')}
+          </tbody>
+        </table>
+      `;
+
+      const existing = azureCard.querySelector('.azure-repos-list');
+      if (existing) existing.innerHTML = tableHtml;
+      else {
+        const container = document.createElement('div');
+        container.className = 'azure-repos-list';
+        container.innerHTML = tableHtml;
+        azureCard.appendChild(container);
+      }
+    } catch (error) {
+      // quietly ignore errors — Azure Repos are optional
+    }
+  })();
 }
 
 function renderGitHubStatus(github, data) {
