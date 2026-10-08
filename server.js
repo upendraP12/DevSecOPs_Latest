@@ -912,18 +912,34 @@ async function fetchAzureDevOpsJson(url, token) {
 async function getAzureRepos(token, organization) {
   if (!token || !organization) return [];
 
-  const url = `https://dev.azure.com/${encodeURIComponent(organization)}/_apis/git/repositories?api-version=6.0`;
-  const data = await fetchAzureDevOpsJson(url, token);
-  const repos = Array.isArray(data.value) ? data.value : [];
+  // Try the common DevOps API endpoint formats. Some organizations use dev.azure.com, others use {org}.visualstudio.com
+  const candidates = [
+    `https://dev.azure.com/${encodeURIComponent(organization)}/_apis/git/repositories?api-version=6.0`,
+    `https://${encodeURIComponent(organization)}.visualstudio.com/_apis/git/repositories?api-version=6.0`
+  ];
 
-  return repos.map((r) => ({
-    id: r.id,
-    name: r.name,
-    project: r.project?.name || r.project?.id || 'unknown',
-    defaultBranch: r.defaultBranch || '',
-    webUrl: r.webUrl || r.remoteUrl || '',
-    size: r.size || 0
-  }));
+  let lastError = null;
+  for (const url of candidates) {
+    try {
+      const data = await fetchAzureDevOpsJson(url, token);
+      const repos = Array.isArray(data.value) ? data.value : [];
+
+      return repos.map((r) => ({
+        id: r.id,
+        name: r.name,
+        project: r.project?.name || r.project?.id || 'unknown',
+        defaultBranch: r.defaultBranch || '',
+        webUrl: r.webUrl || r.remoteUrl || '',
+        size: r.size || 0
+      }));
+    } catch (err) {
+      lastError = err;
+      // try next candidate
+    }
+  }
+
+  // If none succeeded, throw the last error to the caller for clearer diagnostics
+  throw lastError || new Error('Unable to query Azure Repos');
 }
 
 app.post('/api/azure/token', (req, res) => {
