@@ -890,6 +890,73 @@ app.get('/api/github/actions', async (req, res) => {
   return res.json(actions);
 });
 
+// Azure DevOps token cache (in-memory for session use)
+const azureTokenCache = { token: null, organization: null };
+
+async function fetchAzureDevOpsJson(url, token) {
+  const basic = Buffer.from(`:${token}`).toString('base64');
+  const headers = {
+    Accept: 'application/json',
+    Authorization: `Basic ${basic}`
+  };
+
+  const response = await fetch(url, { headers });
+  if (!response.ok) {
+    const text = await response.text().catch(() => '');
+    throw new Error(`Azure DevOps request failed: ${response.status} ${text}`);
+  }
+
+  return response.json();
+}
+
+async function getAzureRepos(token, organization) {
+  if (!token || !organization) return [];
+
+  const url = `https://dev.azure.com/${encodeURIComponent(organization)}/_apis/git/repositories?api-version=6.0`;
+  const data = await fetchAzureDevOpsJson(url, token);
+  const repos = Array.isArray(data.value) ? data.value : [];
+
+  return repos.map((r) => ({
+    id: r.id,
+    name: r.name,
+    project: r.project?.name || r.project?.id || 'unknown',
+    defaultBranch: r.defaultBranch || '',
+    webUrl: r.webUrl || r.remoteUrl || '',
+    size: r.size || 0
+  }));
+}
+
+app.post('/api/azure/token', (req, res) => {
+  const { token, organization } = req.body || {};
+
+  if (!token || !String(token).trim() || !organization || !String(organization).trim()) {
+    return res.status(400).json({ success: false, message: 'Azure DevOps PAT and organization are required.' });
+  }
+
+  azureTokenCache.token = String(token).trim();
+  azureTokenCache.organization = String(organization).trim();
+
+  return res.json({ success: true, message: 'Azure DevOps token saved in memory for this session.' });
+});
+
+app.get('/api/azure/repos', async (req, res) => {
+  const requestToken = req.headers['x-azure-token'];
+  const requestOrg = req.headers['x-azure-organization'];
+  const activeToken = requestToken || azureTokenCache.token || process.env.AZURE_DEVOPS_TOKEN;
+  const organization = requestOrg || azureTokenCache.organization || process.env.AZURE_ORGANIZATION;
+
+  if (!activeToken || !organization) {
+    return res.status(401).json({ success: false, message: 'Connect an Azure DevOps personal access token and organization before listing repositories.' });
+  }
+
+  try {
+    const repos = await getAzureRepos(activeToken, organization);
+    return res.json({ success: true, organization, repos });
+  } catch (error) {
+    return res.status(400).json({ success: false, message: error.message || 'Unable to load Azure Repos.' });
+  }
+});
+
 app.get('/api/recommendations', (req, res) => {
   res.json(recommendations);
 });

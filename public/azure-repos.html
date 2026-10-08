@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Azure Repos</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="panel">
+      <h3>Connect Azure Repos</h3>
+      <div class="github-connect-box">
+        <label>Organization (e.g., my-org)</label>
+        <input id="azureOrganization" placeholder="Organization" />
+        <label>Personal Access Token (PAT)</label>
+        <input id="azurePat" placeholder="Paste Azure DevOps PAT" type="password" />
+        <div class="token-actions">
+          <button id="connectAzureButton" class="primary-btn">Connect Azure Repos</button>
+        </div>
+      </div>
+
+      <section id="azureReposList" class="panel">
+        <p class="empty-state">No repositories loaded.</p>
+      </section>
+    </main>
+
+    <script>
+      async function connectAzure() {
+        const org = document.getElementById('azureOrganization').value.trim();
+        const pat = document.getElementById('azurePat').value.trim();
+        if (!org || !pat) return alert('Organization and PAT required.');
+
+        try {
+          const res = await fetch('/api/azure/token', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ organization: org, token: pat })
+          });
+          const data = await res.json();
+          if (!res.ok || !data.success) throw new Error(data.message || 'Failed');
+
+          loadRepos();
+        } catch (err) {
+          alert(err.message || 'Connection failed');
+        }
+      }
+
+      async function loadRepos() {
+        const res = await fetch('/api/azure/repos');
+        const data = await res.json().catch(() => ({}));
+        const container = document.getElementById('azureReposList');
+        if (!res.ok || !data.success) {
+          container.innerHTML = `<p class="empty-state error-text">${data.message || 'Unable to load repositories.'}</p>`;
+          return;
+        }
+
+        const repos = Array.isArray(data.repos) ? data.repos : [];
+        if (!repos.length) {
+          container.innerHTML = '<p class="empty-state">No repositories found in the organization.</p>';
+          return;
+        }
+
+        container.innerHTML = `
+          <table class="repo-table">
+            <thead><tr><th>Name</th><th>Project</th><th>Default branch</th><th>Size</th></tr></thead>
+            <tbody>
+              ${repos.map(r => `<tr><td>${r.name}</td><td>${r.project}</td><td>${r.defaultBranch}</td><td>${r.size}</td></tr>`).join('')}
+            </tbody>
+          </table>
+        `;
+      }
+
+      document.getElementById('connectAzureButton').addEventListener('click', connectAzure);
+    </script>
+  </body>
+</html>
