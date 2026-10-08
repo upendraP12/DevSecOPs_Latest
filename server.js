@@ -404,44 +404,7 @@ const overview = {
   gitWorkflows: []
 };
 
-const recommendations = [
-  {
-    priority: 'Critical',
-    title: 'Remove exposed storage and public endpoint access',
-    description: 'Defender identified public access paths and hard-coded credentials in lower environments. Restrict inbound access and rotate secrets immediately.',
-    impact: 'Reduces attack surface by 31%',
-    effort: 'Low',
-    owner: 'Platform Security',
-    due: '24 hours'
-  },
-  {
-    priority: 'High',
-    title: 'Tune Azure compute and autoscaling configuration',
-    description: 'Idle autoscaling and over-provisioned compute are driving avoidable cloud spend. Scale against stable workloads and reservation windows.',
-    impact: 'Potential cost savings of $18k/month',
-    effort: 'Medium',
-    owner: 'Cloud Engineering',
-    due: '3 days'
-  },
-  {
-    priority: 'Medium',
-    title: 'Improve release validation gates for deployment safety',
-    description: 'Add pre-production checks for regression risk, runtime drift, and dependency policy enforcement before production promotion.',
-    impact: 'Lowers release failure rate by 22%',
-    effort: 'Low',
-    owner: 'Release Engineering',
-    due: '1 week'
-  },
-  {
-    priority: 'Medium',
-    title: 'Reinforce reliability and observability baselines',
-    description: 'Prioritize service health, SLO drift alerts, and dependency tracing around core customer journeys to support faster recovery.',
-    impact: 'Improves MTTR and uptime confidence',
-    effort: 'Medium',
-    owner: 'SRE',
-    due: '1 week'
-  }
-];
+const recommendations = [];
 
 const architecture = {
   layers: [
