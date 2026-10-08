@@ -563,10 +563,21 @@ function renderOverview(data) {
       const codecovUrl = payload.codecovUrl || '';
       const controlsList = document.getElementById('controls');
       const existing = controlsList.querySelector('.coverage-control');
-      const link = codecovUrl ? `<a href="${codecovUrl}" target="_blank" rel="noreferrer">View details</a>` : '';
-      const item = `<li class="coverage-control"><strong>Code coverage</strong>: ${coverage}% ${link}</li>`;
+      const link = codecovUrl ? `<a class="coverage-link" href="${codecovUrl}" target="_blank" rel="noreferrer">View details</a>` : '';
+      const item = `<li class="coverage-control" data-codecov-url="${codecovUrl}"><strong>Code coverage</strong>: ${coverage}% ${link}</li>`;
       if (existing) existing.outerHTML = item;
       else controlsList.insertAdjacentHTML('afterbegin', item);
+
+      // Make the entire control clickable (open Codecov in a new tab)
+      const controlEl = controlsList.querySelector('.coverage-control');
+      if (controlEl) {
+        controlEl.style.cursor = codecovUrl ? 'pointer' : 'default';
+        controlEl.addEventListener('click', (ev) => {
+          // If user clicked the internal anchor, let it handle navigation normally
+          if (ev.target && ev.target.closest && ev.target.closest('.coverage-link')) return;
+          if (codecovUrl) window.open(codecovUrl, '_blank');
+        });
+      }
     } catch (err) {
       // ignore
     }
