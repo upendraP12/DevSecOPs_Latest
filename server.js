@@ -362,6 +362,60 @@ async function getGitHubActionsData() {
   }
 }
 
+async function getGitHubWorkflowsData() {
+  const activeToken = githubTokenCache.token || GITHUB_TOKEN;
+
+  if (!activeToken) {
+    return [];
+  }
+
+  try {
+    const account = await fetchGitHubJson('https://api.github.com/user', activeToken, {
+      'X-GitHub-Api-Version': '2022-11-28'
+    });
+    const repos = await fetchGitHubJson('https://api.github.com/user/repos?per_page=20&sort=updated', activeToken, {
+      'X-GitHub-Api-Version': '2022-11-28'
+    });
+
+    const repoWorkflows = await Promise.all(
+      (Array.isArray(repos) ? repos : []).slice(0, 10).map(async (repo) => {
+        const repoName = repo.name;
+        const repoOwner = repo.owner?.login || account.login;
+
+        if (!repoName || !repoOwner) return [];
+
+        try {
+          const workflowsResp = await fetchGitHubJson(
+            `https://api.github.com/repos/${repoOwner}/${repoName}/actions/workflows`,
+            activeToken,
+            { 'X-GitHub-Api-Version': '2022-11-28' }
+          );
+
+          const workflows = Array.isArray(workflowsResp.workflows) ? workflowsResp.workflows : [];
+
+          return workflows.map((w) => ({
+            id: w.id,
+            name: w.name,
+            path: w.path,
+            state: w.state,
+            createdAt: w.created_at,
+            updatedAt: w.updated_at,
+            repository: repoName,
+            owner: repoOwner,
+            htmlUrl: `https://github.com/${repoOwner}/${repoName}/actions/workflows/${w.id}`
+          }));
+        } catch (err) {
+          return [];
+        }
+      })
+    );
+
+    return repoWorkflows.flat().sort((a, b) => new Date(b.updatedAt || 0) - new Date(a.updatedAt || 0));
+  } catch (error) {
+    return [];
+  }
+}
+
 const overview = {
   generatedAt: new Date().toISOString(),
   overallRisk: {
@@ -851,6 +905,23 @@ app.get('/api/github/actions', async (req, res) => {
   githubTokenCache.token = String(activeToken).trim();
   const actions = await getGitHubActionsData();
   return res.json(actions);
+});
+
+app.get('/api/github/workflows', async (req, res) => {
+  const requestToken = req.headers['x-github-token'];
+  const activeToken = requestToken || githubTokenCache.token || GITHUB_TOKEN;
+
+  if (!activeToken) {
+    return res.status(401).json({ success: false, message: 'Connect a GitHub token before loading workflows.' });
+  }
+
+  githubTokenCache.token = String(activeToken).trim();
+  try {
+    const workflows = await getGitHubWorkflowsData();
+    return res.json({ success: true, workflows });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message || 'Unable to fetch workflows' });
+  }
 });
 
 // Azure DevOps token cache (in-memory for session use)
