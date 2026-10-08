@@ -560,9 +560,11 @@ function renderOverview(data) {
       const payload = await resp.json().catch(() => ({}));
       if (!resp.ok || !payload.success) return;
       const coverage = Number(payload.coverage || 0);
+      const codecovUrl = payload.codecovUrl || '';
       const controlsList = document.getElementById('controls');
       const existing = controlsList.querySelector('.coverage-control');
-      const item = `<li class="coverage-control"><strong>Code coverage</strong>: ${coverage}%</li>`;
+      const link = codecovUrl ? `<a href="${codecovUrl}" target="_blank" rel="noreferrer">View details</a>` : '';
+      const item = `<li class="coverage-control"><strong>Code coverage</strong>: ${coverage}% ${link}</li>`;
       if (existing) existing.outerHTML = item;
       else controlsList.insertAdjacentHTML('afterbegin', item);
     } catch (err) {

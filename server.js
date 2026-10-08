@@ -962,7 +962,9 @@ app.get('/api/coverage', async (req, res) => {
 
     const data = await response.json();
     const coverage = data?.commit?.totals?.c || data?.commit?.totals?.coverage || null;
-    return res.json({ success: true, coverage: coverage || 0 });
+    const repoParts = String(repo || '').split('/').map((p) => p.trim()).filter(Boolean);
+    const codecovUrl = repoParts.length === 2 ? `https://codecov.io/gh/${repoParts[0]}/${repoParts[1]}/branch/master` : `https://codecov.io/gh/${repo}/branch/master`;
+    return res.json({ success: true, coverage: coverage || 0, codecovUrl });
   } catch (error) {
     return res.status(500).json({ success: false, message: error.message || 'Unable to fetch coverage' });
   }
