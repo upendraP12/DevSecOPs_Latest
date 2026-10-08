@@ -257,6 +257,59 @@ body {
   overflow-y: auto;
 }
 
+/* Blade overlay styles */
+.blade-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  z-index: 120;
+  pointer-events: none;
+}
+
+.blade-overlay .blade-panel {
+  width: min(680px, 90%);
+  height: 100vh;
+  background: rgba(12, 22, 31, 0.98);
+  border-left: 1px solid var(--border);
+  box-shadow: -30px 0 60px rgba(2,6,23,0.5);
+  transform: translateX(100%);
+  transition: transform 320ms cubic-bezier(.2,.9,.2,1);
+  pointer-events: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.blade-overlay.active .blade-panel {
+  transform: translateX(0);
+}
+
+.blade-overlay.hidden { display:none; }
+
+.blade-header {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:16px;
+  border-bottom:1px solid rgba(148,163,184,0.06);
+}
+
+.blade-back, .blade-close {
+  border: none;
+  background: transparent;
+  color: var(--text);
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.blade-iframe {
+  border: none;
+  width: 100%;
+  flex:1 1 auto;
+}
+
 .settings-blade.hidden {
   display: none;
 }
